@@ -1,5 +1,7 @@
-// `sinirli` middleware'ını `auth-middleware.js` dan require edin. Buna ihtiyacınız olacak!
+const userModel = require("./users-model");
+const router = require("express").Router();
 
+// `sinirli` middleware'ını `auth-middleware.js` dan require edin. Buna ihtiyacınız olacak!
 
 /**
   [GET] /api/users
@@ -24,6 +26,4 @@
   }
  */
 
-
 // Diğer modüllerde kullanılabilmesi için routerı "exports" nesnesine eklemeyi unutmayın.
-
