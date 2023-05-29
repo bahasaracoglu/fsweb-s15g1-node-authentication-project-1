@@ -9,7 +9,17 @@ const bcrypt = require("bcryptjs");
     "message": "Geçemezsiniz!"
   }
 */
-function sinirli() {}
+function sinirli() {
+  try {
+    if (req.session && req.session.user_id > 0) {
+      next();
+    } else {
+      res.status(401).json({ message: "Geçemezsiniz!" });
+    }
+  } catch (error) {
+    next(error);
+  }
+}
 
 /*
   req.body de verilen username halihazırda veritabanında varsa
@@ -43,13 +53,24 @@ async function usernameBostami(req, res, next) {
 */
 async function usernameVarmi() {
   try {
-    let { username } = req.body;
+    let { username, password } = req.body;
     const isExist = await userModel.goreBul({ username: username });
 
     if (isExist && isExist.length > 0) {
-      res.status(401).json({ messsage: "Geçersiz kriter" });
+      let user = isExist[0];
+      let isPasswordMatch = bcrypt.compareSync(password, user.password);
+      if (isPasswordMatch) {
+        req.dbUser = user;
+        next();
+      } else {
+        res.status(401).json({
+          message: "Geçersiz kriter",
+        });
+      }
     } else {
-      next();
+      res.status(401).json({
+        message: "Geçersiz kriter",
+      });
     }
   } catch (error) {
     next(error);
