@@ -1,8 +1,8 @@
 // `checkUsernameFree`, `checkUsernameExists` ve `checkPasswordLength` gereklidir (require)
 // `auth-middleware.js` deki middleware fonksiyonları. Bunlara burda ihtiyacınız var!
-const mw = require("./auth-middleware");
 const router = require("express").Router();
 const userModel = require("../users/users-model");
+const mw = require("./auth-middleware");
 const bcryptjs = require("bcryptjs");
 
 /**
@@ -70,7 +70,7 @@ router.post(
   (req, res, next) => {
     try {
       req.session.user_id = req.dbUser.user_id;
-      res.status(200).json(`Hoş geldin ${req.dbUser.username}`);
+      res.status(200).json({ message: `Hoş geldin ${req.dbUser.username}` });
     } catch (error) {
       next(error);
     }
@@ -110,7 +110,6 @@ router.get("/logout", (req, res, next) => {
     next(error);
   }
 });
-s;
 
 // Diğer modüllerde kullanılabilmesi için routerı "exports" nesnesine eklemeyi unutmayın.
 

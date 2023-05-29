@@ -1,5 +1,5 @@
 const userModel = require("../users/users-model");
-const bcrypt = require("bcryptjs");
+const bcryptjs = require("bcryptjs");
 
 /*
   Kullanıcının sunucuda kayıtlı bir oturumu yoksa
@@ -9,7 +9,7 @@ const bcrypt = require("bcryptjs");
     "message": "Geçemezsiniz!"
   }
 */
-function sinirli() {
+function sinirli(req, res, next) {
   try {
     if (req.session && req.session.user_id > 0) {
       next();
@@ -34,7 +34,7 @@ async function usernameBostami(req, res, next) {
     let { username } = req.body;
     const isExist = await userModel.goreBul({ username: username });
     if (isExist && isExist.length > 0) {
-      res.status(442).json({ messsage: "Username kullaniliyor" });
+      res.status(422).json({ message: "Username kullaniliyor" });
     } else {
       next();
     }
@@ -51,14 +51,17 @@ async function usernameBostami(req, res, next) {
     "message": "Geçersiz kriter"
   }
 */
-async function usernameVarmi() {
+async function usernameVarmi(req, res, next) {
   try {
-    let { username, password } = req.body;
+    let { username } = req.body;
     const isExist = await userModel.goreBul({ username: username });
 
     if (isExist && isExist.length > 0) {
       let user = isExist[0];
-      let isPasswordMatch = bcrypt.compareSync(password, user.password);
+      let isPasswordMatch = bcryptjs.compareSync(
+        req.body.password,
+        user.password
+      );
       if (isPasswordMatch) {
         req.dbUser = user;
         next();
@@ -85,7 +88,7 @@ async function usernameVarmi() {
     "message": "Şifre 3 karakterden fazla olmalı"
   }
 */
-function sifreGecerlimi(res, req, next) {
+function sifreGecerlimi(req, res, next) {
   try {
     let { password } = req.body;
     if (!password || password.length < 3) {
