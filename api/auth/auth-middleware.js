@@ -116,6 +116,7 @@ function checkPayload(req, res, next) {
 }
 
 module.exports = {
+  sinirli,
   checkPayload,
   sifreGecerlimi,
   usernameVarmi,
